@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ./.github/workflows/init.yml
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: pip install -r .dev_requirements.txt
 
       - name: Run ansible-lint
         run: ansible-lint
