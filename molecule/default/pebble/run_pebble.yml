@@ -1,0 +1,85 @@
+- name: Create Pebble directory
+  ansible.builtin.file:
+    path: /opt/pebble
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Fetch download URL
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/letsencrypt/pebble/releases/latest
+    return_content: true
+  register: pebble_release_latest
+
+- name: Parse Pebble version and release download URL
+  ansible.builtin.set_fact:
+    pebble_version: "{{ pebble_release_latest.json.name }}"
+    pebble_download_url: "{{ pebble_release_latest.json.assets | selectattr('name', 'equalto', 'pebble-linux-amd64.tar.gz') | map(attribute='browser_download_url') | first }}"  # noqa yaml[line-length]
+
+- name: Download Pebble release
+  ansible.builtin.get_url:
+    url: "{{ pebble_download_url }}"
+    dest: "/opt/pebble_linux_amd64.tar.gz"
+    owner: root
+    group: root
+    mode: "0644"
+  register: pebble_download
+
+- name: Extract Pebble release
+  ansible.builtin.unarchive:
+    src: "/opt/pebble_linux_amd64.tar.gz"
+    dest: /opt/pebble/
+    remote_src: true
+    list_files: true
+    extra_opts:
+      - "--strip-components=3"
+  register: pebble_release_unarchive
+  when: pebble_download is changed   # noqa no-handler
+
+- name: Assert Pebble binary exists
+  ansible.builtin.assert:
+    that: "'pebble' in pebble_release_unarchive.files"
+    fail_msg: "pebble binary not in the release tarball"
+    success_msg: "pebble binary extracted"
+  when: pebble_release_unarchive is changed   # noqa no-handler
+
+- name: Make pebble binary executable
+  ansible.builtin.file:
+    path: /opt/pebble/pebble
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Install Pebble service configuration
+  ansible.builtin.copy:
+    src: pebble/files/pebble.service
+    dest: /etc/systemd/system/
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Download Pebble certificate and key
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/letsencrypt/pebble/refs/heads/main/test/certs/localhost/{{ item }}.pem"
+    dest: "/opt/pebble/{{ item }}.pem"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - cert
+    - key
+
+- name: Install Pebble configuration
+  ansible.builtin.copy:
+    src: pebble/files/config.json
+    dest: /opt/pebble/
+    mode: "0644"
+    owner: root
+    group: root
+
+- name: Run Pebble service
+  ansible.builtin.systemd:
+    name: pebble
+    state: started
+    daemon_reload: true

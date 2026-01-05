@@ -1,0 +1,28 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Stat certificate file
+      ansible.builtin.stat:
+        path: /etc/lego/certificates/molecule.lego.elan.crt
+      register: certificate_file
+
+    - name: Check certificate exists
+      ansible.builtin.assert:
+        that: certificate_file.stat.exists
+        fail_msg: certificate not obtained
+        success_msg: certificate obtained
+
+    - name: Stat certificate link
+      ansible.builtin.stat:
+        path: /root/cert.pem
+      register: certificate_file
+
+    - name: Check certificate link exists
+      ansible.builtin.assert:
+        that:
+          - certificate_file.stat.exists
+          - certificate_file.stat.islnk
+          - certificate_file.stat.lnk_target == '/etc/lego/certificates/molecule.lego.elan.crt'
+        fail_msg: certificate link not exists
+        success_msg: certificate link exists

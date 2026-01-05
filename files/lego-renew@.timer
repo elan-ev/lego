@@ -1,0 +1,11 @@
+[Unit]
+Description=Lego renew certificate timer
+
+[Timer]
+Persistent=true
+OnCalendar=*-*-* 4:00:00
+RandomizedDelaySec=1h
+Unit=lego-renew@%i.service
+
+[Install]
+WantedBy=timers.target

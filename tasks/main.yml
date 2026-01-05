@@ -1,0 +1,128 @@
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode | default('0755') }}"
+    state: directory
+  loop:
+    - path: /opt/lego
+    - path: /etc/lego
+    - path: /etc/lego/config
+      mode: "0700"
+  notify: Renew certificate
+
+- name: Fetch download URL
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/go-acme/lego/releases/latest
+    return_content: true
+  register: lego_release_latest
+
+- name: Parse lego version and release download URL
+  ansible.builtin.set_fact:
+    lego_version: "{{ lego_release_latest.json.name }}"
+    lego_download_url: "{{ lego_release_latest.json.assets | selectattr('name', 'match', 'lego_.+_linux_amd64.tar.gz') | map(attribute='browser_download_url') | first }}"  # noqa yaml[line-length]
+
+- name: Is lego already installed
+  ansible.builtin.stat:
+    path: /opt/lego/version.txt
+  register: lego_version_file_stat
+
+- name: Read installed lego version
+  ansible.builtin.slurp:
+    src: /opt/lego/version.txt
+  when: lego_version_file_stat.stat.exists
+  register: lego_installed_version_file
+
+- name: Parse installed lego version
+  ansible.builtin.set_fact:
+    lego_installed_version: "{{ lego_installed_version_file.content | ansible.builtin.b64decode }}"
+  when: lego_version_file_stat.stat.exists
+
+- name: Installation tasks
+  when: "lego_installed_version | default('undefined') != lego_version"
+  block:
+    - name: Download lego release
+      ansible.builtin.get_url:
+        url: "{{ lego_download_url }}"
+        dest: "/opt/lego/lego_linux_amd64.tar.gz"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Extract lego release
+      ansible.builtin.unarchive:
+        src: "/opt/lego/lego_linux_amd64.tar.gz"
+        dest: /opt/lego/
+        remote_src: true
+        list_files: true
+      register: lego_release_unarchive
+
+    - name: Delete lego release
+      ansible.builtin.file:
+        path: "/opt/lego/lego_linux_amd64.tar.gz"
+        state: absent
+
+    - name: Assert lego binary exists
+      ansible.builtin.assert:
+        that: "'lego' in lego_release_unarchive.files"
+        fail_msg: "lego binary not in the release tarball"
+        success_msg: "lego binary extracted"
+
+    - name: Persist installed lego version
+      ansible.builtin.copy:
+        dest: /opt/lego/version.txt
+        content: "{{ lego_version }}"
+        owner: root
+        group: root
+        mode: "0644"
+        force: true
+
+- name: Configure lego
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/lego/config/{{ item.dest | default(item.src | basename) }}"
+    owner: root
+    group: root
+    mode: "0640"
+  loop:
+    - src: env
+    - src: env_domain
+      dest: "{{ lego_domains | first }}"
+  notify: Renew certificate
+
+- name: Install renew certificate script
+  ansible.builtin.copy:
+    src: lego-renew.sh
+    dest: /opt/lego/
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Renew certificate
+
+- name: Create service and timer definitions
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - lego-renew@.service
+    - lego-renew@.timer
+  register: lego_service_installed
+  notify: Renew certificate
+
+- name: Reload service configurations  # noqa no-handler
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: lego_service_installed is changed
+
+- name: Enable lego timer
+  ansible.builtin.systemd:
+    name: lego-renew@{{ lego_domains | first }}.timer
+    enabled: true
+
+- name: Import link certificate tasks
+  ansible.builtin.include_tasks: link_certificate.yml
+  when: lego_link_certificate_path | default('', true) | length > 0

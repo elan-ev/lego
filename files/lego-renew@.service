@@ -1,0 +1,8 @@
+[Unit]
+Description=Lego renew certificate
+AssertPathExists=/etc/lego/config
+
+[Service]
+WorkingDirectory=/etc/lego
+ExecStart=/opt/lego/lego-renew.sh %i
+Type=oneshot

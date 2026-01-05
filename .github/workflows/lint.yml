@@ -1,0 +1,16 @@
+---
+name: Lint Ansible Role
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: ./.github/workflows/init.yml
+
+      - name: Run ansible-lint
+        run: ansible-lint

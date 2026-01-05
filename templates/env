@@ -1,0 +1,7 @@
+ARGS="{{ lego_extra_args | join(' ') }}"
+
+#LEGO_SERVER="https://acme-staging-v02.api.letsencrypt.org/directory"
+LEGO_EMAIL="{{ lego_email }}"
+{% for lego_env_var in lego_env_vars %}
+{{ lego_env_var }}
+{% endfor %}

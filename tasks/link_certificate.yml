@@ -1,0 +1,19 @@
+- name: Link certificate
+  ansible.builtin.file:
+    src: "/etc/lego/certificates/{{ lego_domains | first }}.crt"
+    dest: "{{ lego_link_certificate_path }}/{{ lego_link_certificate_file_name }}"
+    state: link
+    force: true
+  notify:
+    - Link certificate handler service restart
+    - Link certificate handler service reload
+
+- name: Link certificate key
+  ansible.builtin.file:
+    src: "/etc/lego/certificates/{{ lego_domains | first }}.key"
+    dest: "{{ lego_link_certificate_path }}/{{ lego_link_certificate_key_file_name }}"
+    state: link
+    force: true
+  notify:
+    - Link certificate handler service restart
+    - Link certificate handler service reload

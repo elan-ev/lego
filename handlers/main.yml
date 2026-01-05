@@ -1,0 +1,16 @@
+- name: Renew certificate
+  ansible.builtin.service:
+    name: lego-renew@{{ lego_domains | first }}.service
+    state: started
+
+- name: Link certificate handler service reload
+  ansible.builtin.service:
+    name: "{{ lego_link_certificate_reload_service_name }}"
+    state: reloaded
+  when: "lego_link_certificate_reload_service_name | default('', true) | length > 0"
+
+- name: Link certificate handler service restart
+  ansible.builtin.service:
+    name: "{{ lego_link_certificate_restart_service_name }}"
+    state: restarted
+  when: "lego_link_certificate_restart_service_name | default('', true) | length > 0"
