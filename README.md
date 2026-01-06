@@ -3,7 +3,7 @@
 [![lint](https://github.com/elan-ev/lego/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/elan-ev/lego/actions/workflows/lint.yml?branch=main)
 [![molecule](https://github.com/elan-ev/lego/actions/workflows/molecule.yml/badge.svg?branch=main)](https://github.com/elan-ev/lego/actions/workflows/molecule.yml?branch=main)
 
-This role deploys [Lego](https://github.com/go-acme/lego) and obtain certificate for the specified domain(s). It can be used multiple times to obtain multiple certificates. The configuration is split into
+This role deploys [Lego](https://github.com/go-acme/lego) and obtains certificates for the specified domain(s). It can be used multiple times to obtain multiple certificates. The configuration is split into
 
 - global options:
     - Lego arguments and environment variables used for all domains
@@ -32,7 +32,7 @@ No dependencies required.
     - Required
 
 - `lego_domains`:
-    - List of domain names to obtain certificate for. All but first domains will be set as certificate alternative names.
+    - List of domain names to obtain a certificate for. All but the first domain will be set as certificate alternative names.
     - Default: `["{{ inventory_hostname }}"]`
 
 - `lego_extra_args`:
@@ -44,11 +44,11 @@ No dependencies required.
     - Default: `[]`
 
 - `lego_env_vars`:
-    - List of environment variables for lego. This allows you to apply additional configuration without directly modifying extra arguments. It can be useful to set DNS provider configuration, especially API keys.
+    - List of environment variables for lego. This allows you to apply additional configuration without directly modifying extra arguments. It can be used for setting DNS provider configuration, especially API keys.
     - Default: `[]`
 
 - `lego_domain_env_vars`:
-    - List of environment variables for lego for this specific domain only. This allows you to apply additional configuration without directly modifying extra arguments. It can be useful to set DNS provider configuration, especially API keys.
+    - List of environment variables for lego for this specific domain only. This allows you to apply additional configuration without directly modifying extra arguments. It can be used for setting DNS provider configuration, especially API keys.
     - Default: `[]`
 
 - `lego_hook`:
@@ -56,28 +56,28 @@ No dependencies required.
     - Default:
 
 - `lego_link_certificate_path`:
-    - Directory path to link certificate and key to. The directory must exists. If unset or empty, no link operations will happen.
+    - Directory path to link certificate and key to. The directory must exist. If unset or empty, no link operations will occur.
     - Default:
 
 - `lego_link_certificate_file_name`:
-    - If `lego_link_certificate_path` is set, certificate will be linked to the path `{{ lego_link_certificate_path }}/{{ lego_link_certificate_file_name }}`.
+    - If `lego_link_certificate_path` is set, the certificate will be linked to the path `{{ lego_link_certificate_path }}/{{ lego_link_certificate_file_name }}`.
     - Default: `{{ lego_domains | first }}.crt`
 
 - `lego_link_certificate_key_file_name`:
-    - If `lego_link_certificate_path` is set, certificate key will be linked to the path `{{ lego_link_certificate_path }}/{{ lego_link_certificate_key_file_name }}`.
+    - If `lego_link_certificate_path` is set, the certificate key will be linked to the path `{{ lego_link_certificate_path }}/{{ lego_link_certificate_key_file_name }}`.
     - Default: `{{ lego_domains | first }}.key`
 
 - `lego_link_certificate_reload_service_name`:
-    - If `lego_link_certificate_path` is set and certificate is linked, the service with the given name should be reloaded. Empty value will disable the handler.
+    - If `lego_link_certificate_path` is set and the certificate is linked, the service with the given name will be reloaded. An empty value will disable the handler.
     - Default:
 
 - `lego_link_certificate_restart_service_name`:
-    - If `lego_link_certificate_path` is set and certificate is linked, the service with the given name should be restarted. Empty value will disable the handler.
+    - If `lego_link_certificate_path` is set and the certificate is linked, the service with the given name will be restarted. An empty value will disable the handler.
     - Default:
 
 ## Example Playbook
 
-A minimal example to obtain certificate with lego without using an external webserver:
+A minimal example to obtain a certificate with lego without using an external webserver:
 
 ```yaml
 - hosts: servers
@@ -89,9 +89,9 @@ A minimal example to obtain certificate with lego without using an external webs
         - "--http"
 ```
 
-An example of using this role to obtain certificate using an external webserver (e.g. Nginx). The webserver should be configured to deliver files from `/var/lib/nginx/.well-known/acme-challenge` over http and URL path `/.well-known/acme-challenge`. On each certificate update, the webserver should be reloaded.
+An example of using this role to obtain a certificate using an external webserver (e.g. Nginx). The webserver should be configured to deliver files from `/var/lib/nginx/.well-known/acme-challenge` over http under the URL path `/.well-known/acme-challenge`. On each certificate update, the webserver should be reloaded.
 
-For more information about ACME HTTP challenge please take a look at [Documentation](https://letsencrypt.org/docs/challenge-types/#http-01-challenge).
+For more information about ACME HTTP challenges please take a look at [Documentation](https://letsencrypt.org/docs/challenge-types/#http-01-challenge).
 
 ```yaml
 - hosts: servers
@@ -106,7 +106,7 @@ For more information about ACME HTTP challenge please take a look at [Documentat
       lego_hook: "systemctl reload nginx"
 ```
 
-An example of using this role to obtain certificate over DNS challenge. This example uses [deSEC.io](https://go-acme.github.io/lego/dns/desec/index.html) as a DNS provider. The certificate should cover additional alternative domain names. Last but not least, our webapp should be reloaded on each certificate update.
+An example of using this role to obtain a certificate over DNS challenge. This example uses [deSEC.io](https://go-acme.github.io/lego/dns/desec/index.html) as a DNS provider. The certificate should cover additional alternative domain names. Last but not least, our webapp should be reloaded on each certificate update.
 
 ```yaml
 - hosts: servers
@@ -140,7 +140,7 @@ python -m venv venv
 pip install -r .dev_requirements.txt
 ```
 
-E.g. you can run the linter (`ansible-lint`).
+This way, you can run the linter (`ansible-lint`).
 
 For development and testing you can use [molecule](https://molecule.readthedocs.io/en/latest/).
 With podman as driver you can install it like this – preferably in a virtual environment:
@@ -157,6 +157,6 @@ molecule converge
 molecule destroy
 ```
 
-Or simply run `molecule test` to do all steps in one.
+Or simply run `molecule test` to do all steps at once.
 
-If you want to inspect a running test instance use `molecule login --host <instance_name>`, where you replace `<instance_name>` with the desired value.
+If you want to inspect a running test instance, use `molecule login --host <instance_name>` where you replace `<instance_name>` with the desired value.
