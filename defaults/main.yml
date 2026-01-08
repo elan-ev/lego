@@ -1,53 +1,53 @@
-# List of domain names to obtain certificate for. All but first domains will be set as certificate alternative names.
+# List of domain names to obtain a certificate for. All but the first domain will be set as certificate alternative names.
 # Default: ["{{ inventory_hostname }}"]
 lego_domains: ["{{ inventory_hostname }}"]
 
 # List of additional lego arguments to be applied.
-# For available options please take a look at [Lego documentation](https://go-acme.github.io/lego/usage/cli/options/index.html).
+# For available options please take a look at the [Lego documentation](https://go-acme.github.io/lego/usage/cli/options/index.html).
 # Default: []
 lego_extra_args: []
 
 # List of additional lego arguments to be applied for this specific domain only.
-# For available options please take a look at [Lego documentation](https://go-acme.github.io/lego/usage/cli/options/index.html).
+# For available options please take a look at the [Lego documentation](https://go-acme.github.io/lego/usage/cli/options/index.html).
 # Default: []
 lego_domain_extra_args: []
 
 # List of environment variables for lego.
 # This allows you to apply additional configuration without directly modifying extra arguments.
-# It can be useful to set DNS provider configuration, especially API keys.
+# It can be used for setting a DNS provider configuration, especially API keys.
 # Default: []
 lego_env_vars: []
 
 # List of environment variables for lego for this specific domain only.
 # This allows you to apply additional configuration without directly modifying extra arguments.
-# It can be useful to set DNS provider configuration, especially API keys.
+# It can be used for setting a DNS provider configuration, especially API keys.
 # Default: []
 lego_domain_env_vars: []
 
-# Lego run/renew certificate hook. The hook is executed only when the certificates are effectively obtained/renewed.
+# Lego run/renew certificate hook. The hook is executed only when the certificates are actually obtained/renewed.
 # Default:
 lego_hook:
 
-# Directory path to link certificate and key to. The directory must exists. If unset or empty, no link operations will happen.
+# Directory path to link the certificate and key to. The directory must exist. If unset or empty, no link operations will happen.
 # Default:
 lego_link_certificate_path:
 
-# If `lego_link_certificate_path` is set, certificate will be linked to the path
+# If `lego_link_certificate_path` is set, the certificate will be linked to the path
 # `{{ lego_link_certificate_path }}/{{ lego_link_certificate_file_name }}`.
 # Default: `{{ lego_domains | first }}.crt`
 lego_link_certificate_file_name: "{{ lego_domains | first }}.crt"
 
-# If `lego_link_certificate_path` is set, certificate key will be linked to the path
+# If `lego_link_certificate_path` is set, the certificate key will be linked to the path
 # `{{ lego_link_certificate_path }}/{{ lego_link_certificate_key_file_name }}`.
 # Default: `{{ lego_domains | first }}.key`
 lego_link_certificate_key_file_name: "{{ lego_domains | first }}.key"
 
-# If `lego_link_certificate_path` is set and certificate is linked, the service with the given name should be reloaded.
+# If `lego_link_certificate_path` is set and the certificate is linked, the service with the given name will be reloaded.
 # Empty value will disable the handler.
 # Default:
 lego_link_certificate_reload_service_name:
 
-# If `lego_link_certificate_path` is set and certificate is linked, the service with the given name should be restarted.
+# If `lego_link_certificate_path` is set and the certificate is linked, the service with the given name will be restarted.
 # Empty value will disable the handler.
 # Default:
 lego_link_certificate_restart_service_name:
