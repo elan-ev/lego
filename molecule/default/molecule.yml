@@ -1,0 +1,41 @@
+---
+dependency:
+  name: galaxy
+  enabled: false
+driver:
+  name: containers
+platforms:
+  - name: lego_centos_stream9
+    image: quay.io/centos/centos:stream9
+    pre_build_image: false
+    command: /sbin/init
+    tmpfs:
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: lego_debian
+    image: docker.io/library/debian:stable
+    pre_build_image: false
+    command: /sbin/init
+    tmpfs:
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: lego_ubuntu
+    image: docker.io/ubuntu:latest
+    pre_build_image: false
+    command: /sbin/init
+    tmpfs:
+      "/tmp": "exec"
+      "/run": "rw,noexec,nosuid,nodev"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+lint: |
+  set -e
+  ansible-lint
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

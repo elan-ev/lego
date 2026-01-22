@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  author: Waldemar Smirnow
+  role_name: lego
+  namespace: elan
+  company: elan e.V.
+  description: Lego ACME client
+  license: BSD-3-Clause
+  min_ansible_version: "2.9"
+  galaxy_tags:
+    - acme
+  platforms:
+    - name: EL
+      versions:
+        - "all"
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+dependencies: []

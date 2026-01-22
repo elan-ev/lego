@@ -1,0 +1,6 @@
+ansible
+ansible-lint
+molecule
+molecule-plugins
+molecule-plugins[docker]
+molecule-plugins[podman]

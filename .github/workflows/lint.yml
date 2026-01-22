@@ -1,0 +1,19 @@
+---
+name: Lint Ansible Role
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: pip install -r .dev_requirements.txt
+
+      - name: Run ansible-lint
+        run: ansible-lint

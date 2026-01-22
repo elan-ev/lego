@@ -1,0 +1,26 @@
+---
+
+name: Test Ansible Role with Molecule
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: pip install -r .dev_requirements.txt
+
+      # Ansible-Lint links the current role directory to the Ansible roles search path.
+      - name: Run ansible-lint
+        run: ansible-lint
+
+      - name: Test playbook
+        run: molecule test
+        env:
+          PY_COLORS: '1'

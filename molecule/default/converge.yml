@@ -1,0 +1,24 @@
+---
+- name: Initialize ACME server
+  hosts: all
+  tasks:
+    - name: Import initialization tasks
+      ansible.builtin.import_tasks: pebble/run_pebble.yml
+
+- name: Converge
+  hosts: all
+  vars:
+    lego_email: lego@localhost
+    lego_domains:
+      - molecule.lego.elan
+    lego_extra_args:
+      - "--http"
+    lego_env_vars:
+      - 'LEGO_SERVER="https://localhost:14000/dir"'
+      - 'LEGO_CA_CERTIFICATES="/opt/pebble/cert.pem"'
+      - 'LEGO_CA_SERVER_NAME="localhost"'
+    lego_link_certificate_path: /root
+    lego_link_certificate_file_name: cert.pem
+    lego_link_certificate_key_file_name: key.pem
+  roles:
+    - elan.lego

@@ -1,0 +1,6 @@
+DOMAIN_ARGS="{{ lego_domain_extra_args | join(' ') }}{% for lego_domain in lego_domains %} --domains {{ lego_domain }}{% endfor %}"
+HOOK="{{ lego_hook }}"
+
+{% for lego_domain_env_var in lego_domain_env_vars %}
+{{ lego_domain_env_var }}
+{% endfor %}

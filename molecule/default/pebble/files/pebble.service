@@ -1,0 +1,10 @@
+[Unit]
+Description=Pebble Simple ACME Server
+
+[Service]
+Environment="PEBBLE_VA_NOSLEEP=1"
+Environment="PEBBLE_VA_ALWAYS_VALID=1"
+WorkingDirectory=/opt/pebble
+ExecStart=/opt/pebble/pebble -config /opt/pebble/config.json
+Restart=always
+User=root
