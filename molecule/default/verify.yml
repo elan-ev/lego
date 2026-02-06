@@ -1,10 +1,12 @@
 ---
 - name: Verify
   hosts: all
+  vars:
+    lego_domain: molecule.lego.elan
   tasks:
     - name: Stat certificate file
       ansible.builtin.stat:
-        path: /etc/lego/certificates/molecule.lego.elan.crt
+        path: /etc/lego/certificates/{{ lego_domain }}.crt
       register: certificate_file
 
     - name: Check certificate exists
@@ -23,6 +25,21 @@
         that:
           - certificate_file.stat.exists
           - certificate_file.stat.islnk
-          - certificate_file.stat.lnk_target == '/etc/lego/certificates/molecule.lego.elan.crt'
+          - certificate_file.stat.lnk_target == '/etc/lego/certificates/{{ lego_domain }}.crt'
         fail_msg: certificate link not exists
         success_msg: certificate link exists
+
+    - name: Check Lego renew timer is enabled and active
+      check_mode: true
+      ansible.builtin.systemd:
+        name: lego-renew@{{ lego_domain }}.timer
+        enabled: true
+        state: started
+      register: lego_renew_timer_state
+
+    - name: Verify Lego renew timer state
+      ansible.builtin.assert:
+        that:
+          - lego_renew_timer_state is not changed
+        fail_msg: lego-renew@{{ lego_domain }}.timer wasn't enabled or running
+        success_msg: lego-renew@{{ lego_domain }}.timer is enabled and running
