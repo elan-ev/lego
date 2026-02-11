@@ -25,7 +25,7 @@
         that:
           - certificate_file.stat.exists
           - certificate_file.stat.islnk
-          - certificate_file.stat.lnk_target == '/etc/lego/certificates/{{ lego_domain }}.crt'
+          - certificate_file.stat.lnk_target == '/etc/lego/certificates/' + lego_domain + '.crt'
         fail_msg: certificate link not exists
         success_msg: certificate link exists
 
