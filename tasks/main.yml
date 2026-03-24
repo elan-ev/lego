@@ -122,6 +122,7 @@
   ansible.builtin.systemd:
     name: lego-renew@{{ lego_domains | first }}.timer
     enabled: true
+    state: started
 
 - name: Import link certificate tasks
   ansible.builtin.include_tasks: link_certificate.yml
