@@ -12,10 +12,5 @@ test -f "${CONF_DIR}/config/${DOMAIN}" && . "${CONF_DIR}/config/${DOMAIN}"
 set +a
 
 set -e
-if [ -f "${CERT_PATH}" ]; then
-    echo "Renew ${DOMAIN} certificate if needed"
-    "${LEGO_BIN}" --accept-tos --path "${CONF_DIR}" $ARGS $DOMAIN_ARGS renew --renew-hook "$HOOK"
-else
-    echo "Obtain ${DOMAIN} certificate"
-    "${LEGO_BIN}" --accept-tos --path "${CONF_DIR}" $ARGS $DOMAIN_ARGS run --run-hook "$HOOK"
-fi
+echo "Obtaining/renewing ${DOMAIN} certificate"
+"${LEGO_BIN}" run --accept-tos --path "${CONF_DIR}" $ARGS $DOMAIN_ARGS --deploy-hook "$HOOK"
