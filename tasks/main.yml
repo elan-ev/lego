@@ -14,7 +14,7 @@
 
 - name: Fetch download URL
   ansible.builtin.uri:
-    url: https://api.github.com/repos/go-acme/lego/releases/latest
+    url: https://api.github.com/repos/go-acme/lego/releases/tags/{{ lego_version }}
     return_content: true
   register: lego_release_latest
 

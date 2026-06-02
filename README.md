@@ -27,6 +27,10 @@ No dependencies required.
 
 ## Role Variables
 
+- `lego_version`:
+    - Version of lego to install (tag in its GitHub repo). Simple appended to `https://api.github.com/repos/go-acme/lego/releases/tags/`.
+    - Required
+
 - `lego_email`:
     - Domain administrators email address. It will be passed to the ACME provider (e.g. LetsEncrypt).
     - Required
