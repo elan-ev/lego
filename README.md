@@ -56,7 +56,7 @@ No dependencies required.
     - Default: `[]`
 
 - `lego_hook`:
-    - Lego run/renew certificate hook. The hook is executed only when the certificates are effectively obtained/renewed.
+    - Lego run/renew certificate hook. The hook is executed only when the certificates are effectively obtained/renewed. Can be a multi line string to include multiple commands.
     - Default:
 
 - `lego_link_certificate_path`:

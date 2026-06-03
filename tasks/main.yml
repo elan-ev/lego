@@ -100,6 +100,15 @@
     mode: "0755"
   notify: Renew certificate
 
+- name: Install hook script
+  ansible.builtin.template:
+    src: hook.sh
+    dest: /opt/lego/
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Renew certificate
+
 - name: Create service and timer definitions
   ansible.builtin.copy:
     src: "{{ item }}"

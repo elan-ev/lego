@@ -2,6 +2,7 @@
 
 CONF_DIR="/etc/lego"
 LEGO_BIN="/opt/lego/lego"
+HOOK_SCRIPT="/opt/lego/hook.sh"
 DOMAIN="$1"
 CERT_PATH="${CONF_DIR}/certificates/${DOMAIN}.crt"
 
@@ -13,4 +14,4 @@ set +a
 
 set -e
 echo "Obtaining/renewing ${DOMAIN} certificate"
-"${LEGO_BIN}" run --accept-tos --path "${CONF_DIR}" $ARGS $DOMAIN_ARGS --deploy-hook "$HOOK"
+"${LEGO_BIN}" run --accept-tos --path "${CONF_DIR}" $ARGS $DOMAIN_ARGS --deploy-hook "$HOOK_SCRIPT"
