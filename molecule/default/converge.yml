@@ -8,6 +8,7 @@
 - name: Converge
   hosts: all
   vars:
+    lego_version: v5.2.2
     lego_email: lego@localhost
     lego_domains:
       - molecule.lego.elan

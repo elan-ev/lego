@@ -14,7 +14,7 @@
 
 - name: Fetch download URL
   ansible.builtin.uri:
-    url: https://api.github.com/repos/go-acme/lego/releases/latest
+    url: https://api.github.com/repos/go-acme/lego/releases/tags/{{ lego_version }}
     return_content: true
   register: lego_release_latest
 
@@ -94,6 +94,15 @@
 - name: Install renew certificate script
   ansible.builtin.copy:
     src: lego-renew.sh
+    dest: /opt/lego/
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Renew certificate
+
+- name: Install hook script
+  ansible.builtin.template:
+    src: hook.sh
     dest: /opt/lego/
     owner: root
     group: root

@@ -27,6 +27,10 @@ No dependencies required.
 
 ## Role Variables
 
+- `lego_version`:
+    - Version of lego to install (tag in its GitHub repo). Simple appended to `https://api.github.com/repos/go-acme/lego/releases/tags/`.
+    - Required
+
 - `lego_email`:
     - Domain administrators email address. It will be passed to the ACME provider (e.g. LetsEncrypt).
     - Required
@@ -52,7 +56,7 @@ No dependencies required.
     - Default: `[]`
 
 - `lego_hook`:
-    - Lego run/renew certificate hook. The hook is executed only when the certificates are effectively obtained/renewed.
+    - Lego run/renew certificate hook. The hook is executed only when the certificates are effectively obtained/renewed. Can be a multi line string to include multiple commands.
     - Default:
 
 - `lego_link_certificate_path`:
